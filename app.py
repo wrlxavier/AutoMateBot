@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+USER_ID = os.getenv('USER_ID')
 
 
 intents = discord.Intents.default()
@@ -16,14 +17,12 @@ client = discord.Client(intents=intents)
 async def on_ready():
     print(f'{client.user} is connected.')
 
+    user = await client.fetch_user(USER_ID)
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-    
-    if message.content.startswith('Hello'):
-        await message.channel.send('Hello!')
+    if user:
+        dm_channel = await user.create_dm()
+        await dm_channel.send(f'{user.display_name}, seu sistema de automação foi inicializado com sucesso.')
+
 
 
 client.run(DISCORD_TOKEN)
